@@ -1,0 +1,68 @@
+# Particles are encoded as follows:
+# ve   ve~   e-   e+   u u~ d d~
+# vmu  vmu~  mu-  mu+  c c~ s s~
+# vtau vtau~ tau- tau+ t t~ b b~
+# g H Z W+ W- A
+
+# processes:
+process = u   u~ -> A A ,factor = 1
+
+# Number of parton flavors.
+Nflavors = 5
+
+# Interactions
+switch = withQCD   Yes
+switch = withQED   Yes
+switch = withWeak  Yes
+# pNonQCD  =  EW-couplings  Higgs-gluon-couplings  Higgs-photon-couplings
+pNonQCD = 2 0 0
+
+# Collinear pdf set. Also in TMD-case, alphaStrong is taken from there.
+lhaSet = MSHT20lo_as130
+
+TMDlibSet = 102239
+
+#Choose which initial states must be off-shell
+offshell = 1 1 #.  g* g* -> ... 
+#offshell = 0 1  # eg.  g  g* -> ...
+#offshell = 1 0  # eg.  g* g  -> ...
+#offshell = 0 0  # eg.  g  g  -> ...
+
+# Center of mass energy. Must be larger than zero.
+Ecm = 13000
+
+cut = {pT|1|} > 40
+cut = {pT|2|} > 30
+cut = {deltaR|1,2|} > 0.4
+
+cut = {rapidity|2|} > -2.37
+cut = {rapidity|1|} > -2.37
+cut = {rapidity|2|} < 2.37
+cut = {rapidity|1|} < 2.37
+
+cut source = if ({rapidity|1|}.gt. -2.37d0 .and. {rapidity|1|}.lt. 2.37d0) then
+cut source = if ({rapidity|1|}.gt. 1.37d0 .and. {rapidity|1|}.lt. 1.52d0) REJECT
+cut source = if ({rapidity|1|}.gt. -1.52d0 .and. {rapidity|1|}.lt. -1.37d0) REJECT
+cut source = endif
+
+cut source = if ({rapidity|2|}.gt. -2.37d0 .and. {rapidity|2|}.lt. 2.37d0) then
+cut source = if ({rapidity|2|}.gt. 1.37d0 .and. {rapidity|2|}.lt. 1.52d0) REJECT
+cut source = if ({rapidity|2|}.gt. -1.52d0 .and. {rapidity|2|}.lt. -1.37d0) REJECT
+cut source = endif
+# Renormalization/factorization scale
+scale = 2. * sqrt(({mass|1+2|}*{mass|1+2|} + {pT|1+2|}*{pT|1+2|}))
+
+helicity = sampling
+# Masses and widths. No width is width=0
+mass = Z   91.1882  2.4952
+mass = W   80.419   2.21
+mass = H  125.0     0.00429
+mass = t  173.5
+# Interactions
+switch = withHiggs No
+switch = withHG    No
+# Couplings. You can set either alphaEW or Gfermi
+coupling = Gfermi 1.16639d-5
+
+# Number of nonzero-weight phase space points to be spent on optimization.
+Noptim = 100,000

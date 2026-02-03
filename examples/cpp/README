@@ -1,0 +1,10 @@
+
+ Let $KaTie be the KaTie-directory. Executing
+   $ $KaTie/run.sh katamp
+ creates the sourefile katamp.f90 in the directory $KaTie/build .
+ The header file katamp.hpp can be found in $KaTie/src .
+ To create an executable a.out, execute
+   $ gfortran -c katamp.f90
+   $ g++ -c test_katie.cpp
+   $ g++ katamp.o test_katie.o -lgfortran
+

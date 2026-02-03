@@ -1,0 +1,77 @@
+# Particles are encoded as follows:
+# ve   ve~   e-   e+   u u~ d d~
+# vmu  vmu~  mu-  mu+  c c~ s s~
+# vtau vtau~ tau- tau+ t t~ b b~
+# g H A Z W+ W-
+
+# Beam energies
+EbeamNegRap = 27.6
+EbeamPosRap = 920
+
+switch = withQCD Yes
+switch = withQED Yes
+switch = withWeak No
+switch = withHiggs No
+switch = withHG No
+
+pNonQCD = 2 0 0
+Nflavors = 2
+
+# process = NegRap PosRap -> finst1 finst2 etc.
+process = DIS g  -> u~ u  , factor = Nf
+process = DIS u  -> g  u  , factor = 1
+process = DIS u~ -> g  u~ , factor = 1
+process = DIS d  -> g  d  , factor = 1
+process = DIS d~ -> g  d~ , factor = 1
+
+offshell = 1
+
+lhaSet = CT10nlo
+
+# Read TMDs from grid files
+tmdTableDir = /home/user0/physoft/tmdlib-1.0.26/data/BHKS/MRW-CT10nlo/
+tmdpdf = g  CT10nlo_der_gluon.dat
+tmdpdf = u  CT10nlo_der_u.dat
+tmdpdf = u~ CT10nlo_der_ubar.dat
+tmdpdf = d  CT10nlo_der_d.dat
+tmdpdf = d~ CT10nlo_der_dbar.dat
+
+#TMDlibSet = PB-TMDNLO-HERAI+II-2018-aspt
+
+# Phase space cuts. angle and theta are in degrees
+cut = {energy|electron|} > 11
+cut = {theta|electron|} > 30
+cut = {theta|electron|} < 155
+cut = {plus|1+2+electron|} > 35
+cut = {plus|1+2+electron|} < 65
+cut = {Qsquare} > 150
+cut = {Qsquare} < 15000
+cut = {inelast} > 0.2
+cut = {inelast} < 0.7
+cut = {deltaRbreit|1,2|} > 1.0
+cut = {rapidity|1|} > -0.8
+cut = {rapidity|1|} <  2.0
+cut = {rapidity|2|} > -0.8
+cut = {rapidity|2|} <  2.0
+cut = {pTbreit|1|} > 5
+cut = {pTbreit|1|} < 50
+cut = {pTbreit|2|} > 5
+cut = {pTbreit|2|} < 50
+cut = {mass|1+2|} > 16
+
+# Renormalization/factorization scale
+scale = sqrt({Qsquare})
+
+# Masses and widths
+mass = Z   91.1882  2.4952
+mass = W   80.419   2.21
+mass = H  125.0     0.00429
+mass = t  173.5
+# Couplings. You can set either alphaEW or Gfermi
+coupling = Gfermi 1.16639d-5
+
+# Number of nonzero-weight phase space points to be spent on optimization.
+Noptim = 100,000
+
+# Treatment of helicities. Options are: sum, sampling, polarized.
+helicity = sampling

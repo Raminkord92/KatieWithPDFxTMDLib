@@ -1,0 +1,11 @@
+process = g  g  -> mu+ mu- u  u~ , factor = Nf
+process = u  g  -> mu+ mu- u  g  , factor = 1
+process = g  u  -> mu+ mu- u  g  , factor = 1
+process = u~ g  -> mu+ mu- u~ g  , factor = 1
+process = g  u~ -> mu+ mu- u~ g  , factor = 1
+process = u  u  -> mu+ mu- u  u  , factor = 1
+process = u  u~ -> mu+ mu- g  g  , factor = 1
+process = u  u~ -> mu+ mu- u  u~ , factor = 1
+process = u~ u  -> mu+ mu- g  g  , factor = 1
+process = u~ u  -> mu+ mu- u~ u  , factor = 1
+process = u~ u~ -> mu+ mu- u~ u~ , factor = 1

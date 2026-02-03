@@ -1,0 +1,6 @@
+process = u  g  -> mu+ mu- u  , factor = 1
+process = g  u  -> mu+ mu- u  , factor = 1
+process = u~ g  -> mu+ mu- u~ , factor = 1
+process = g  u~ -> mu+ mu- u~ , factor = 1
+process = u  u~ -> mu+ mu- g  , factor = 1
+process = u~ u  -> mu+ mu- g  , factor = 1

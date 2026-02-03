@@ -1,0 +1,95 @@
+!{momenta=psPoint
+!{itmdf=no
+  subroutine hSum_1( obj ,rslt ,psPoint )                  !{task=optimize!}
+  subroutine hSum_2( obj ,rslt ,psPoint ,colcon ,diagOut ) !{task=mainMC!}
+!}itmdf
+!{itmdf=yes
+  subroutine hSum_3( obj ,rslt ,psPoint ,tmds )                  !{task=optimize!}
+  subroutine hSum_4( obj ,rslt ,psPoint ,tmds ,colcon ,diagOut ) !{task=mainMC!}
+!}itmdf
+!}momenta
+!{momenta=array
+  subroutine hSum_5( obj ,rslt ,momenta ) !{itmdf=no!}
+  subroutine hSum_6( obj ,rslt ,momenta ,tmds ) !{itmdf=yes!}
+!}momenta
+  class(matrixelement_type) :: obj
+  real(kind(1d0))   ,intent(out) :: rslt
+  type(psPoint_type),intent(in ) :: psPoint        !{momenta=psPoint!}
+  real(kind(1d0))   ,intent(in ) :: momenta(0:4,*) !{momenta=array!}
+  real(kind(1d0))   ,intent(in ) :: tmds(10) !{itmdf=yes!}
+  integer           ,intent(out) :: colcon(2,obj%Nxtrn)         !{task=mainMC!}
+  real(kind(1d0))   ,intent(out),optional :: diagOut(obj%Nprtl) !{task=mainMC!}
+  integer :: helicity(size_xternal),iEval
+  real(kind(1d0)) :: wght,term
+  real(kind(1d0)) :: diag(720),sumDiag(720) !{task=mainMC!}
+  sumDiag(1:obj%Nprtl) = 0 !{task=mainMC!}
+  call katamp_put_internal( obj%kinID ,psPoint ) !{momenta=psPoint!}
+  call katamp_put_momenta( obj%kinID ,momenta(0:3,1:obj%Nxtrn) ,momenta(4,1:obj%Nxtrn) ) !{momenta=array!}
+  rslt = 0
+  do ;if (obj%xHelConf%exit(helicity(1:obj%Nxtrn),wght)) exit
+    call katamp_evaluate( obj%kinID,obj%prcID ,iEval ,helicity )
+!{itmdf=no
+    call katamp_sqr( obj%kinID,obj%prcID ,iEval ,term )            !{task=optimize!}
+    call katamp_sqr_diag( obj%kinID,obj%prcID ,iEval ,term ,diag ) !{task=mainMC!}
+!}itmdf
+!{itmdf=yes
+    call katamp_itmd_sqr( obj%kinID,obj%prcID ,iEval ,tmds ,term )            !{task=optimize!}
+    call katamp_itmd_sqr_diag( obj%kinID,obj%prcID ,iEval ,tmds ,term ,diag ) !{task=mainMC!}
+!}itmdf
+    call obj%xHelConf%sum( term )
+    rslt = rslt + term*wght
+    sumDiag(1:obj%Nprtl) = sumDiag(1:obj%Nprtl) + diag(1:obj%Nprtl) !{task=mainMC!}
+  enddo
+  rslt = rslt*obj%const
+  call katamp_choose_colcon( obj%kinID,obj%prcID ,sumDiag ,colcon )  !{task=mainMC!}
+  if (present(diagOut)) diagOut(1:obj%Nprtl) = sumDiag(1:obj%Nprtl)  !{task=mainMC!}
+  end subroutine
+
+
+!{momenta=psPoint
+!{itmdf=no
+  subroutine hSampl_1( obj ,rslt ,psPoint ,rho )                   !{task=optimize!}
+  subroutine hSampl_2( obj ,rslt ,psPoint ,rho ,colcon ,helicity ) !{task=mainMC!}
+!}itmdf                       
+!{itmdf=yes                   
+  subroutine hSampl_3( obj ,rslt ,psPoint ,rho ,tmds )                   !{task=optimize!}
+  subroutine hSampl_4( obj ,rslt ,psPoint ,rho ,tmds ,colcon ,helicity ) !{task=mainMC!}
+!}itmdf
+  class(matrixelement_type) :: obj
+  real(kind(1d0))   ,intent(out) :: rslt
+  type(psPoint_type),intent(in ) :: psPoint
+  real(kind(1d0))   ,intent(in ) :: tmds(10) !{itmdf=yes!}
+  real(kind(1d0))   ,intent(in ) :: rho
+  integer           ,intent(out) :: colcon(2,obj%Nxtrn),helicity(obj%Nxtrn) !{task=mainMC!}
+  integer :: osHelicity(size_xternal),xHelicity(size_xternal),iEval,ii
+  real(kind(1d0)) :: wght,term
+  real(kind(1d0)) :: diag(720),sumDiag(720) !{task=mainMC!}
+  call obj%xHelConf%gnrt( xHelicity ,rho )
+  sumDiag(1:obj%Nprtl) = 0 !{task=mainMC!}
+  call katamp_put_internal( obj%kinID ,psPoint )
+  rslt = 0
+  do ;if (obj%osHelConf%exit(osHelicity(1:obj%Nxtrn),wght)) exit
+    do ii=1,obj%Noff
+      xHelicity(obj%off(ii)) = osHelicity(obj%off(ii))
+    enddo
+    call katamp_evaluate( obj%kinID,obj%prcID ,iEval ,xHelicity )
+!{itmdf=no
+    call katamp_sqr( obj%kinID,obj%prcID ,iEval ,term )            !{task=optimize!}
+    call katamp_sqr_diag( obj%kinID,obj%prcID ,iEval ,term ,diag ) !{task=mainMC!}
+!}itmdf
+!{itmdf=yes
+    call katamp_itmd_sqr( obj%kinID,obj%prcID ,iEval ,tmds ,term )            !{task=optimize!}
+    call katamp_itmd_sqr_diag( obj%kinID,obj%prcID ,iEval ,tmds ,term ,diag ) !{task=mainMC!}
+!}itmdf
+    call obj%osHelConf%sum( term )
+    rslt = rslt + term*wght
+    sumDiag(1:obj%Nprtl) = sumDiag(1:obj%Nprtl) + diag(1:obj%Nprtl) !{task=mainMC!}
+  enddo
+  wght = obj%xHelConf%wght()  
+  rslt = rslt*obj%const
+  call obj%xHelConf%digital( rslt )
+  rslt = rslt*wght
+  call katamp_choose_colcon( obj%kinID,obj%prcID ,sumDiag ,colcon ) !{task=mainMC!}
+  helicity(1:obj%Nxtrn) = xHelicity(1:obj%Nxtrn)                    !{task=mainMC!}
+  end subroutine
+!}momenta

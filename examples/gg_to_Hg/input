@@ -1,0 +1,85 @@
+# Particles are encoded as follows:
+# ve   ve~   e-   e+   u u~ d d~
+# vmu  vmu~  mu-  mu+  c c~ s s~
+# vtau vtau~ tau- tau+ t t~ b b~
+# g H
+
+# Number of final-state particles in each group
+Nfinst = 2
+
+# List of processes. 
+#
+# If you wish to sum over pdfs for processes with equivalent matrix elements,
+# then you need to set
+#   partlumi = combined
+# in this file. This is NOT SUITABLE to create event files for parton showers.
+# Indicating quarks with q and r implies summation over initial-state pdfs.
+# Indicating quarks with u d u~ d~ implies summation within up/down-type
+# and within regular/anti-type, so for the case of electro-weak interactions.
+# The cross section for each process is multiplied with the quantity "factor"
+# on each process-line, for the summation over final-state partons.
+# The next quantity indicates to which groups the process contributes in the
+# case of multi-parton-interactions.
+#
+# The last quantity sets the number of desired non-QCD couplings in the
+# amplitude, respectively of type:  electro-weak  higgs-gluon  higgs-photon
+# Of course the necessary interactions need to be switched on in the
+# user module.
+
+process = g g  -> g H   factor = 1   groups = 1  pNonQCD = 0 1 0
+
+# Collinear pdf set. Also in TMD-case, alphaStrong is taken from there.
+lhaSet = MSTW2008nlo68cl
+
+#Choose which initial states must be off-shell
+#offshell = 1 1  # eg.  g* g* -> ... 
+offshell = 0 1  # eg.  g  g* -> ...
+#offshell = 1 0  # eg.  g* g  -> ...
+#offshell = 0 0  # eg.  g  g  -> ...
+
+# Paths and files related to TMDs must be out-commented if you do not
+# want to use them.
+# Directory where TMDs can be found:
+tmdTableDir = /home/user0/kTfac/tables/krzysztof02/
+# TMD grid files. You can change (update) tmdTableDir between them.
+# All of them will be loaded, so don't put more than necessary.
+tmdpdf = g  KMR_gluon.dat
+
+# Number of parton flavors.
+Nflavors = 5
+
+# Number of nonzero-weight phase space points to be spent on optimization.
+Noptim = 100,000
+
+# Center of mass energy. Must be larger than zero.
+Ecm = 7000
+
+# Phase space cuts.
+# {pT|2|} is the pT of final state 2.
+# {pT|2|1,2,4} is the 2nd-hardest pT of final states 1,2,4.
+# {pT|1+4|} is the pT of the sum of final-state momenta 1 and 4.
+# {deltaR|1,2|} is the delta-R between final states 1 and 2.
+# The value of  rapidity  and  pseudoRap  can be negative.
+# Further available are  ET  mass  deltaPhi .
+cut = {deltaR|1,2|} > 0.5
+cut = {pT|1|} > 50
+cut = {rapidity|1|} > -4.7
+cut = {rapidity|1|} <  4.7
+
+# Renormalization/factorization scale
+scale = ({pT|1|}+{pT|2|})/2
+
+# Masses and widths
+mass = Z   91.1882  2.4952
+mass = W   80.419   2.21
+mass = H  125.0     0.00429
+mass = t  173.5
+# Interactions
+switch = withQCD   Yes
+switch = withQED   No
+switch = withWeak  No
+switch = withHiggs Yes
+switch = withHG    Yes
+# Couplings. You can set either alphaEW or Gfermi
+coupling = Gfermi 1.16639d-5
+coupling = Higgs-gluon -0.431d-3
