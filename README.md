@@ -1,6 +1,6 @@
 # PDFxTMDLib usage in KaTie input files
 KatieWithPDFxTMDLib is a clone of Katie Parton level event generator https://bitbucket.org/hameren/katie/src/master/.
-This document explains how to use PDFxTMDLib (TMDs and collinear PDFs) (https://github.com/Raminkord92/PDFxTMD) from KaTie input files. Example inputs are in `diphoton/`:
+This document explains how to use [PDFxTMDLib](https://github.com/Raminkord92/PDFxTMD) (TMDs and collinear PDFs), from KaTie input files. Example inputs are in `diphoton/`:
 - `diphoton/pdfxtmdKt` (TMD / kT-dependent)
 - `diphoton/pdfxtmdCol` (collinear / cPDF)
 
